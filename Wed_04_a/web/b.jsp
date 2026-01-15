@@ -1,6 +1,6 @@
 <%-- 
-    Document   : index
-    Created on : Jan 8, 2026, 11:07:32 AM
+    Document   : b
+    Created on : Jan 8, 2026, 11:20:00 AM
     Author     : AN
 --%>
 
@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <a href="login.jsp">Login</a>
+        <h1>Dang nhap that bai!! Sai username hoac password</h1>
     </body>
 </html>
