@@ -18,10 +18,11 @@
     <body>
         <%
             User user = (User) session.getAttribute("userWasLogin");
-            if (user != null) {
-            } else {
+            if (user == null) {
                 response.sendRedirect("login.jsp");
             }
+            String keyword = request.getAttribute("keyword") + "";
+            keyword = keyword.equals("null")? "":request.getAttribute("keyword") + "";
         %>
         <!-- From -->
         <form action="MainController" method="Get">
@@ -29,7 +30,7 @@
                 <tbody>
                     <tr>
                         <td>
-                            <input type="text" name="keyword">
+                            <input type="text" name="keyword" value="<%=keyword%>">
                             <input type="hidden" name="action" value="search">
                         </td>
                         <td>
@@ -55,7 +56,7 @@
                 </tr>
             </thead>
             <tbody>
-                <%            
+                <%
                     if (request.getAttribute("listUniversity") != null) {
                         ArrayList<University> list = (ArrayList<University>) request.getAttribute("listUniversity");
                         if (!list.isEmpty()) {
@@ -72,10 +73,10 @@
                     <td><%=u.getRegion()%></td>
                     <td>
                         <%
-                            if (u.isDraft()) {                                
+                            if (u.isDraft()) {
                         %>
                         <input type="button" name="name" value="Edit">
-                        <%        
+                        <%
                             }
                         %>
                     </td>
@@ -85,7 +86,7 @@
                 } else {
                 %>
             <p style="color: red">This University do not exit!</p>
-            <%        
+            <%
                     }
                 }
             %>
