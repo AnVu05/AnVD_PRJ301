@@ -4,20 +4,21 @@
  */
 package controller;
 
+import dal.UniversityDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import model.User;
+import model.University;
 
 /**
  *
  * @author AN
  */
-public class MainController extends HttpServlet {
+public class searchController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -30,32 +31,23 @@ public class MainController extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            request.setCharacterEncoding("UTF-8");
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            String action = request.getParameter("action");
-            switch (action) {
-                case "login":
-                    String userID = request.getParameter("username");
-                    String password = request.getParameter("password");
-                    User user = new User(userID, password);
-                    HttpSession session = request.getSession();
-                    session.setAttribute("userWasLogin", null);
-                    request.setAttribute("user", user);
-                    request.getRequestDispatcher("loginController").forward(request, response);
-                    break;
-                case "logout":
-                    response.sendRedirect("logoutController");
-                    break;
-                case "search":
-                    String keyword = request.getParameter("keyword");
-                    request.setAttribute("keyword", keyword);
-                    request.getRequestDispatcher("searchController").forward(request, response);
-                    break;
+            ArrayList<University> list = new ArrayList<>();
+            UniversityDAO uDAO = new UniversityDAO();
+            String keyword = (String) request.getAttribute("keyword");
+            System.out.println(keyword);
+            if (keyword == null) {
+                list.addAll(uDAO.getAll());
+            } else {
+                list.addAll(uDAO.filterByName(keyword));
             }
+            request.setAttribute("listUniversity", list);
+            request.setAttribute("keyword", keyword);
+            request.getRequestDispatcher("search.jsp").forward(request, response);
         }
     }
 

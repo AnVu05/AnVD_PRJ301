@@ -35,7 +35,6 @@ public class MainController extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             request.setCharacterEncoding("UTF-8");
             response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
             String action = request.getParameter("action");
             switch (action) {
                 case "login":

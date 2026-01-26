@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dal.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -17,7 +18,7 @@ import model.User;
  *
  * @author AN
  */
-public class MainController extends HttpServlet {
+public class loginController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -33,28 +34,26 @@ public class MainController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            request.setCharacterEncoding("UTF-8");
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("text/html;charset=UTF-8");
-            String action = request.getParameter("action");
-            switch (action) {
-                case "login":
-                    String userID = request.getParameter("username");
-                    String password = request.getParameter("password");
-                    User user = new User(userID, password);
-                    HttpSession session = request.getSession();
-                    session.setAttribute("userWasLogin", null);
-                    request.setAttribute("user", user);
-                    request.getRequestDispatcher("loginController").forward(request, response);
-                    break;
-                case "logout":
-                    response.sendRedirect("logoutController");
-                    break;
-                case "search":
-                    String keyword = request.getParameter("keyword");
-                    request.setAttribute("keyword", keyword);
-                    request.getRequestDispatcher("searchController").forward(request, response);
-                    break;
+            UserDAO uDAO = new UserDAO();
+            String error;
+            HttpSession session = request.getSession();
+            User user = (User) request.getAttribute("user");
+            if (session.getAttribute("userWasLogin") == null) {
+                boolean login = uDAO.login(user);
+                System.out.println(login);
+                if (login && uDAO.checkStatus(user)) {
+                    session.setAttribute("userWasLogin", uDAO.findUserByUserID(user.getUserID()));
+                    request.getRequestDispatcher("home.jsp").forward(request, response);
+                } else if(login && (uDAO.checkStatus(user) == false)){
+                    error = "An ngu code sai. Pls contract with Admin!";
+                    request.setAttribute("error", error);
+                    request.getRequestDispatcher("ER403.jsp").forward(request, response);
+                }
+                else {
+                    error = "Invaild username or password";
+                    request.setAttribute("error", error);
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                }
             }
         }
     }
